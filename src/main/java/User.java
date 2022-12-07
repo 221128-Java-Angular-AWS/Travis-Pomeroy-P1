@@ -1,3 +1,5 @@
+package src.main.java;
+
 public class User {
 
     static int role;

@@ -1,5 +1,5 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+package src.main.java;
+
 import java.util.Scanner;
 
 public class Main {
