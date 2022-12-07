@@ -2,7 +2,6 @@ package src.main.java;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,27 +13,15 @@ public class Database {
 
     private static Connection c;
 
-    static String user;
-    static String pass;
-    static String url;
-
-    private static Connection databaseConnect() {
-
-        Properties props = new Properties();
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        InputStream inputStream = loader.getResourceAsStream("login.properties");
+    static Connection databaseConnect() {
 
         try {
-            props.load(inputStream);
+            File file = new File("src/main/resources/login.properties");
+            Scanner scan = new Scanner(file);
 
-            user = props.getProperty("user");
-            pass = props.getProperty("pass");
-            url  = props.getProperty("url");
-
-            props.load(inputStream);
-
-            System.out.println(props.getProperty("user"));
-            System.out.println(user);
+            String user = scan.nextLine();
+            String pass = scan.nextLine();
+            String url  = scan.nextLine();
 
             try {
                 Class.forName("org.postgresql.Driver");
@@ -48,28 +35,13 @@ public class Database {
                 System.exit(0);
 
             }
-        } catch (IOException e) {
+        } catch (FileNotFoundException e){
+            System.out.println("No file!");
             e.printStackTrace();
         }
-    /*
-    try {
-        File file = new File("src/main/resources/login.properties");
-        Scanner scan = new Scanner(file);
+        return c;
 
-        user = scan.nextLine();
-        pass = scan.nextLine();
-        url  = scan.nextLine();
-*/
-
-        /*
-    } catch (FileNotFoundException e){
-        System.out.println("No file!");
-        e.printStackTrace();
     }
-    */
-    return c;
-
-}
 
     static void databaseClose () {
         try {
