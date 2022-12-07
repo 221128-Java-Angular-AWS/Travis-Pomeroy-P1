@@ -19,12 +19,13 @@ public class Database {
             File file = new File("src/main/resources/login.properties");
             Scanner scan = new Scanner(file);
 
-            String user = scan.nextLine();
-            String pass = scan.nextLine();
-            String url  = scan.nextLine();
+            String user     = scan.nextLine();
+            String pass     = scan.nextLine();
+            String url      = scan.nextLine();
+            String driver   = scan.nextLine();
 
             try {
-                Class.forName("org.postgresql.Driver");
+                Class.forName(driver);
                 c = DriverManager.getConnection(url, user, pass);
                 System.out.println("Opened database successfully");
                 return c;

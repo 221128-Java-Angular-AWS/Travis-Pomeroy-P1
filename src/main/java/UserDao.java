@@ -106,12 +106,13 @@ public class UserDao {
         newUser.setPassphrase(pass);
         try{
 
-            String sql2 = "SELECT COUNT(*) FROM users WHERE email = '" + newUser.getEmail() + "'";
+            String sql2 = "SELECT * FROM users WHERE email = '" + email + "'";
             PreparedStatement pstmt = connection.prepareStatement(sql2);
             ResultSet rs = pstmt.executeQuery();
 
+            //Checking if the email parameter is valid for the database
             if (email.isEmpty()) {
-                System.out.println("Unable to create new user before");
+                System.out.println("Unable to create new user");
                 return result;
             }   else if (rs.next()) {
                 System.out.println("Email already exists!");
@@ -128,7 +129,6 @@ public class UserDao {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("Unable to Create new User");
         }
         return result;
     }
