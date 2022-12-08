@@ -1,4 +1,4 @@
-package src.main.java.pojo;
+package project.pojo;
 
 import java.util.Objects;
 
@@ -6,10 +6,21 @@ public class User {
 
     private int userId;
     private String email;
-    private String firstname;
-    private String lastname;
+    private String firstName;
+    private String lastName;
     private String passphrase;
     private String role;
+
+    public User() {
+    }
+
+    public User( String email, String firstName, String lastName, String passphrase, String role) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.passphrase = passphrase;
+        this.role = role;
+    }
 
     public int getUserId() {
         return userId;
@@ -27,20 +38,20 @@ public class User {
         this.email = email;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPassphrase() {
@@ -64,12 +75,12 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return getUserId() == user.getUserId() && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getFirstname(), user.getFirstname()) && Objects.equals(getLastname(), user.getLastname()) && Objects.equals(getPassphrase(), user.getPassphrase()) && Objects.equals(getRole(), user.getRole());
+        return getUserId() == user.getUserId() && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getFirstName(), user.getFirstName()) && Objects.equals(getLastName(), user.getLastName()) && Objects.equals(getPassphrase(), user.getPassphrase()) && Objects.equals(getRole(), user.getRole());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUserId(), getEmail(), getFirstname(), getLastname(), getPassphrase(), getRole());
+        return Objects.hash(getUserId(), getEmail(), getFirstName(), getLastName(), getPassphrase(), getRole());
     }
 
     @Override
@@ -77,8 +88,8 @@ public class User {
         return "User{" +
                 "userId=" + userId +
                 ", email='" + email + '\'' +
-                ", firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
+                ", firstname='" + firstName + '\'' +
+                ", lastname='" + lastName + '\'' +
                 ", password='" + passphrase + '\'' +
                 ", role='" + role + '\'' +
                 '}';

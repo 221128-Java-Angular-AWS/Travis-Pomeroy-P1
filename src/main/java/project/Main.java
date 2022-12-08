@@ -1,6 +1,6 @@
-package src.main.java;
+package project;
 
-import src.main.java.persistence.UserDao;
+import project.persistence.UserDao;
 
 public class Main {
     public static void main(String... args) {

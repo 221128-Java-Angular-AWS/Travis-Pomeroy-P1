@@ -1,21 +1,30 @@
-package src.main.java.pojo;
+package project.pojo;
 
 import java.util.Objects;
 
 public class Ticket {
     //This is the ticket object that holds all relevant data from the ticket table
     private Integer id;
-    private Integer user_id;
+    private Integer userId;
     private Double amount;
     private String description;
     private String status;
+
+    public Ticket() {
+    }
+
+    public Ticket(Integer userId, Double amount, String description) {
+        this.userId = userId;
+        this.amount = amount;
+        this.description = description;
+    }
 
     public void setId(Integer id) {
         this.id = id;
     }
 
     public void setUserid(Integer user_id) {
-        this.user_id = user_id;
+        this.userId = user_id;
     }
 
     public void setAmount(Double amount) {
@@ -35,7 +44,7 @@ public class Ticket {
     }
 
     public Integer getUser_Id() {
-        return user_id;
+        return userId;
     }
 
     public Double getAmount() {
@@ -55,19 +64,19 @@ public class Ticket {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ticket ticket = (Ticket) o;
-        return Objects.equals(getId(), ticket.getId()) && Objects.equals(user_id, ticket.user_id) && Objects.equals(getAmount(), ticket.getAmount()) && Objects.equals(getDescription(), ticket.getDescription()) && Objects.equals(getStatus(), ticket.getStatus());
+        return Objects.equals(getId(), ticket.getId()) && Objects.equals(userId, ticket.userId) && Objects.equals(getAmount(), ticket.getAmount()) && Objects.equals(getDescription(), ticket.getDescription()) && Objects.equals(getStatus(), ticket.getStatus());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), user_id, getAmount(), getDescription(), getStatus());
+        return Objects.hash(getId(), userId, getAmount(), getDescription(), getStatus());
     }
 
     @Override
     public String toString() {
         return "Ticket{" +
                 "id=" + id +
-                ", userid=" + user_id +
+                ", userid=" + userId +
                 ", amount=" + amount +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +

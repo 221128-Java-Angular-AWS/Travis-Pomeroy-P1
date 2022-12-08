@@ -1,6 +1,6 @@
-package src.main.java.persistence;
+package project.persistence;
 
-import src.main.java.pojo.User;
+import project.pojo.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,17 +12,17 @@ import java.util.Set;
 
 public class UserDao {
 /*  User table is called: users
-    ____________________________________________________________________________________
+    _____________________________________________________________________________________
     |userid | email                 | firstname | lastname  | passphrase    | role      |
     /////////////////////////////////////////////////////////////////////////////////////
     |0001   |employee@company.com   | John      | Smith     | password      | employee  |
     |0002   |manager@company.com    | Harry     | Wilson    | 1234          | manager   |
-    --------------------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------
  */
     public Set<User> getAllUsers() {
 
         //Connects to the database and prepares the SQL statement
-        Connection connection = Database.databaseConnect();
+        Connection connection = Database.getConnection();
         String sql = "SELECT * FROM users";
         Set<User> users = new HashSet();
 
@@ -33,10 +33,10 @@ public class UserDao {
 
             while(rs.next()) {
                 User user = new User();
-                user.setUserId(rs.getInt("userID"));
+                user.setUserId(rs.getInt("user_id"));
                 user.setEmail(rs.getString("email"));
-                user.setFirstname(rs.getString("firstname"));
-                user.setLastname(rs.getString("lastname"));
+                user.setFirstName(rs.getString("first_name"));
+                user.setLastName(rs.getString("last_name"));
                 user.setPassphrase(rs.getString("passphrase"));
                 user.setRole(rs.getString("role"));
 
@@ -52,7 +52,7 @@ public class UserDao {
     }
 
     public User checkLogin () {
-        Connection connection = Database.databaseConnect();
+        Connection connection = Database.getConnection();
 
         Scanner scan = new Scanner(System.in);
 
@@ -76,10 +76,10 @@ public class UserDao {
 
                 // if the query is not empty will fill in the fields for the user
                 if (rs.next()) {
-                    loginUser.setUserId(rs.getInt("userID"));
+                    loginUser.setUserId(rs.getInt("user_id"));
                     loginUser.setEmail(rs.getString("email"));
-                    loginUser.setFirstname(rs.getString("firstname"));
-                    loginUser.setLastname(rs.getString("lastname"));
+                    loginUser.setFirstName(rs.getString("first_name"));
+                    loginUser.setLastName(rs.getString("last_name"));
                     loginUser.setPassphrase(rs.getString("passphrase"));
                     loginUser.setRole(rs.getString("role"));
 
@@ -91,13 +91,13 @@ public class UserDao {
                 e.printStackTrace();
             }
         } while (notLogin);
-        System.out.println("Logged in as: " + loginUser.getFirstname() + " " + loginUser.getLastname());
+        System.out.println("Logged in as: " + loginUser.getFirstName() + " " + loginUser.getLastName());
         return loginUser;
     }
 
     public int register() {
-        Connection connection = Database.databaseConnect();
-        String sql = "INSERT INTO users (email, firstname, lastname, passphrase) VALUES (?,?,?,?)";
+        Connection connection = Database.getConnection();
+        String sql = "INSERT INTO users (email, first_name, last_name, passphrase) VALUES (?,?,?,?)";
         Integer result = -1;
 
         Scanner scan = new Scanner(System.in);
@@ -110,8 +110,8 @@ public class UserDao {
 
         User newUser = new User();
         newUser.setEmail(email);
-        newUser.setFirstname(first);
-        newUser.setLastname(last);
+        newUser.setFirstName(first);
+        newUser.setLastName(last);
         newUser.setPassphrase(pass);
         try{
 
@@ -131,8 +131,8 @@ public class UserDao {
 
             PreparedStatement pstmt2 = connection.prepareStatement(sql);
             pstmt2.setString(1,newUser.getEmail());
-            pstmt2.setString(2,newUser.getFirstname());
-            pstmt2.setString(3,newUser.getLastname());
+            pstmt2.setString(2,newUser.getFirstName());
+            pstmt2.setString(3,newUser.getLastName());
             pstmt2.setString(4,newUser.getPassphrase());
             result = pstmt2.executeUpdate();
 
@@ -143,8 +143,8 @@ public class UserDao {
     }
 
     public int alterUserRole(Integer id, String role) {
-        Connection connection = Database.databaseConnect();
-        String sql = "UPDATE users SET role = '" + role + "' WHERE userID = '" + id + "'";
+        Connection connection = Database.getConnection();
+        String sql = "UPDATE users SET role = '" + role + "' WHERE user_id = '" + id + "'";
         Integer result = -1;
 
         try {

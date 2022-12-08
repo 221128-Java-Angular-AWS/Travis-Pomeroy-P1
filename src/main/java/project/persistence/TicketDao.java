@@ -1,6 +1,6 @@
-package src.main.java.persistence;
+package project.persistence;
 
-import src.main.java.pojo.Ticket;
+import project.pojo.Ticket;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,8 +14,8 @@ public class TicketDao {
     public Set<Ticket> getAllTickets() {
 
         //Connects to the database and prepares the SQL statement
-        Connection connection = Database.databaseConnect();
-        String sql = "SELECT * FROM ticket";
+        Connection connection = Database.getConnection();
+        String sql = "SELECT * FROM tickets";
         Set<Ticket> tickets = new HashSet();
 
         //Submits the query and fills the Ticket Set with the result from the ticket table
@@ -25,8 +25,8 @@ public class TicketDao {
 
             while(rs.next()) {
                 Ticket ticket = new Ticket();
-                ticket.setId(rs.getInt("ticketID"));
-                ticket.setUserid(rs.getInt("userID"));
+                ticket.setId(rs.getInt("ticket_id"));
+                ticket.setUserid(rs.getInt("user_id"));
                 ticket.setAmount(rs.getDouble("amount"));
                 ticket.setDescription(rs.getString("description"));
                 ticket.setStatus(rs.getString("status"));
@@ -43,8 +43,8 @@ public class TicketDao {
     public Set<Ticket> getAllPendingTickets() {
 
         //Connects to the database and prepares the SQL statement
-        Connection connection = Database.databaseConnect();
-        String sql = "SELECT * FROM ticket WHERE status = 'Pending'";
+        Connection connection = Database.getConnection();
+        String sql = "SELECT * FROM tickets WHERE status = 'Pending'";
         Set<Ticket> tickets = new HashSet();
 
         //Submits the query and fills the Ticket Set with the result from the ticket table
@@ -54,8 +54,8 @@ public class TicketDao {
 
             while(rs.next()) {
                 Ticket ticket = new Ticket();
-                ticket.setId(rs.getInt("ticketID"));
-                ticket.setUserid(rs.getInt("userID"));
+                ticket.setId(rs.getInt("ticket_id"));
+                ticket.setUserid(rs.getInt("user_id"));
                 ticket.setAmount(rs.getDouble("amount"));
                 ticket.setDescription(rs.getString("description"));
                 ticket.setStatus(rs.getString("status"));
@@ -73,15 +73,15 @@ public class TicketDao {
     public Set<Ticket> getUserTickets(Integer id, String filter) {
 
         //Connects to the database and prepares the SQL statement
-        Connection connection = Database.databaseConnect();
+        Connection connection = Database.getConnection();
         String sql = "";
 
         // if a filter is applied change the statement to only retrieve approved/denied/pending
         if (filter == "") {
-            sql = "SELECT * FROM ticket WHERE userID = '" + id + "'";
+            sql = "SELECT * FROM tickets WHERE user_id = '" + id + "'";
         }
         else {
-            sql = "SELECT * FROM ticket WHERE userID = '" + id + "' AND status = '" + filter + "'";
+            sql = "SELECT * FROM tickets WHERE user_id = '" + id + "' AND status = '" + filter + "'";
         }
         Set<Ticket> tickets = new HashSet();
 
@@ -92,8 +92,8 @@ public class TicketDao {
 
             while(rs.next()) {
                 Ticket ticket = new Ticket();
-                ticket.setId(rs.getInt("ticketID"));
-                ticket.setUserid(rs.getInt("userID"));
+                ticket.setId(rs.getInt("ticket_id"));
+                ticket.setUserid(rs.getInt("user_id"));
                 ticket.setAmount(rs.getDouble("amount"));
                 ticket.setDescription(rs.getString("description"));
                 ticket.setStatus(rs.getString("status"));
@@ -110,8 +110,8 @@ public class TicketDao {
 
     public int insertNewTicket(Ticket ticket) {
 
-        Connection connection = Database.databaseConnect();
-        String sql = "INSERT INTO ticket (userID, amount, description) VALUES (?,?,?)";
+        Connection connection = Database.getConnection();
+        String sql = "INSERT INTO tickets (user_id, amount, description) VALUES (?,?,?)";
         Integer result = -1;
 
         try{
@@ -129,8 +129,8 @@ public class TicketDao {
 
     public int alterTicket(Integer id, String status) {
 
-        Connection connection = Database.databaseConnect();
-        String sql = "UPDATE ticket SET status = '" + status + "' WHERE ticketID = '" + id + "'";
+        Connection connection = Database.getConnection();
+        String sql = "UPDATE tickets SET status = '" + status + "' WHERE ticket_id = '" + id + "'";
         Integer result = -1;
 
         try {
