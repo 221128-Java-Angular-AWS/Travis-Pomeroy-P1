@@ -1,4 +1,6 @@
-package src.main.java;
+package src.main.java.persistence;
+
+import src.main.java.pojo.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +11,14 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class UserDao {
-
+/*  User table is called: users
+    ____________________________________________________________________________________
+    |userid | email                 | firstname | lastname  | passphrase    | role      |
+    /////////////////////////////////////////////////////////////////////////////////////
+    |0001   |employee@company.com   | John      | Smith     | password      | employee  |
+    |0002   |manager@company.com    | Harry     | Wilson    | 1234          | manager   |
+    --------------------------------------------------------------------------------------
+ */
     public Set<User> getAllUsers() {
 
         //Connects to the database and prepares the SQL statement
@@ -49,7 +58,7 @@ public class UserDao {
 
         String user;
         String pass;
-        Boolean notLogin = true;
+        boolean notLogin = true;
         User loginUser = new User();
 
         System.out.println("Please log in");
@@ -82,7 +91,7 @@ public class UserDao {
                 e.printStackTrace();
             }
         } while (notLogin);
-
+        System.out.println("Logged in as: " + loginUser.getFirstname() + " " + loginUser.getLastname());
         return loginUser;
     }
 

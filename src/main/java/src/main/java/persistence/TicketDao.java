@@ -1,6 +1,11 @@
-package src.main.java;
+package src.main.java.persistence;
 
-import java.sql.*;
+import src.main.java.pojo.Ticket;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +32,6 @@ public class TicketDao {
                 ticket.setStatus(rs.getString("status"));
                 tickets.add(ticket);
             }
-            connection.close();
 
         } catch (SQLException e) {
 

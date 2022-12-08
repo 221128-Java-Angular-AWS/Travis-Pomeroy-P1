@@ -1,7 +1,6 @@
 package src.main.java;
 
-import java.util.Scanner;
-import java.util.Set;
+import src.main.java.persistence.UserDao;
 
 public class Main {
     public static void main(String... args) {
