@@ -1,48 +1,122 @@
 package project.persistence;
 
+import project.exceptions.PasswordIncorrectException;
+import project.exceptions.UserNotFoundException;
 import project.pojo.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
 public class UserDao {
-/*  User table is called: users
-    _____________________________________________________________________________________
-    |userid | email                 | firstname | lastname  | passphrase    | role      |
-    /////////////////////////////////////////////////////////////////////////////////////
-    |0001   |employee@company.com   | John      | Smith     | password      | employee  |
-    |0002   |manager@company.com    | Harry     | Wilson    | 1234          | manager   |
-    -------------------------------------------------------------------------------------
- */
+
+    private Connection connection;
+
+    public UserDao() {
+        this.connection = Database.getConnection();
+    }
+    public void create(User user) {
+        try {
+            String sql = "INSERT INTO users (email, first_name, last_name, passphrase) VALUES (?,?,?,?)";
+            PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, user.getEmail());
+            pstmt.setString(2, user.getFirstName());
+            pstmt.setString(3, user.getLastName());
+            pstmt.setString(4, user.getPassphrase());
+
+            pstmt.executeUpdate();
+            ResultSet rs = pstmt.getGeneratedKeys();
+
+            if(rs.next()) {
+                System.out.println(rs.getInt("user_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void delete(User user) {
+        try {
+            String sql = "DELETE FROM users WHERE user_id = ?";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, user.getUserId());
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void update(User user) {
+        try {
+            String sql = "UPDATE users SET email = ?, first_name = ?, last_name = ?, passphrase = ? WHERE user_id = ?";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, user.getEmail());
+            pstmt.setString(2, user.getFirstName());
+            pstmt.setString(3, user.getLastName());
+            pstmt.setString(4, user.getPassphrase());
+            pstmt.setInt(5, user.getUserId());
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public User authenticate(String username, String password) throws UserNotFoundException, PasswordIncorrectException{
+        try {
+            String sql = "SELECT * FROM users WHERE email = ?";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, username);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if(!rs.next()) {
+                throw new UserNotFoundException("Username was not found");
+            }
+
+            User user = new User(rs.getInt("user_id"),
+                                rs.getString("email"),
+                                rs.getString("first_name"),
+                                rs.getString("last_name"),
+                                rs.getString("password"),
+                                rs.getString("role"));
+
+            if(user.getPassphrase().equals(password)) {
+                return user;
+            }
+            throw new PasswordIncorrectException("Password was incorrect");
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     public Set<User> getAllUsers() {
 
-        //Connects to the database and prepares the SQL statement
-        Connection connection = Database.getConnection();
+        //Prepares the SQL statment
         String sql = "SELECT * FROM users";
         Set<User> users = new HashSet();
 
-        //Submits the query and fills the Ticket Set with the result from the ticket table
+        //Submits the query and fills the Ticket Set with the result from the users table
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
 
             while(rs.next()) {
-                User user = new User();
-                user.setUserId(rs.getInt("user_id"));
-                user.setEmail(rs.getString("email"));
-                user.setFirstName(rs.getString("first_name"));
-                user.setLastName(rs.getString("last_name"));
-                user.setPassphrase(rs.getString("passphrase"));
-                user.setRole(rs.getString("role"));
+                User user = new User(rs.getInt("user_id"),
+                        rs.getString("email"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("password"),
+                        rs.getString("role"));
 
                 users.add(user);
             }
-            connection.close();
 
         } catch (SQLException e) {
 
@@ -52,8 +126,7 @@ public class UserDao {
     }
 
     public User checkLogin () {
-        Connection connection = Database.getConnection();
-
+        //The logic from this may be used later
         Scanner scan = new Scanner(System.in);
 
         String user;
@@ -96,7 +169,8 @@ public class UserDao {
     }
 
     public int register() {
-        Connection connection = Database.getConnection();
+
+        //The logic from this may be used later
         String sql = "INSERT INTO users (email, first_name, last_name, passphrase) VALUES (?,?,?,?)";
         Integer result = -1;
 
@@ -143,7 +217,6 @@ public class UserDao {
     }
 
     public int alterUserRole(Integer id, String role) {
-        Connection connection = Database.getConnection();
         String sql = "UPDATE users SET role = '" + role + "' WHERE user_id = '" + id + "'";
         Integer result = -1;
 
@@ -157,3 +230,4 @@ public class UserDao {
         return result;
     }
 }
+

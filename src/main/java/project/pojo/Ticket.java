@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Ticket {
     //This is the ticket object that holds all relevant data from the ticket table
-    private Integer id;
+    private Integer ticketId;
     private Integer userId;
     private Double amount;
     private String description;
@@ -13,14 +13,16 @@ public class Ticket {
     public Ticket() {
     }
 
-    public Ticket(Integer userId, Double amount, String description) {
+    public Ticket(Integer ticketId, Integer userId, Double amount, String description, String status) {
+        this.ticketId = ticketId;
         this.userId = userId;
         this.amount = amount;
         this.description = description;
+        this.status = status;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setTicketId(Integer ticketId) {
+        this.ticketId = ticketId;
     }
 
     public void setUserid(Integer user_id) {
@@ -39,8 +41,8 @@ public class Ticket {
         this.status = status;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getTicketId() {
+        return ticketId;
     }
 
     public Integer getUser_Id() {
@@ -64,18 +66,18 @@ public class Ticket {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ticket ticket = (Ticket) o;
-        return Objects.equals(getId(), ticket.getId()) && Objects.equals(userId, ticket.userId) && Objects.equals(getAmount(), ticket.getAmount()) && Objects.equals(getDescription(), ticket.getDescription()) && Objects.equals(getStatus(), ticket.getStatus());
+        return Objects.equals(getTicketId(), ticket.getTicketId()) && Objects.equals(userId, ticket.userId) && Objects.equals(getAmount(), ticket.getAmount()) && Objects.equals(getDescription(), ticket.getDescription()) && Objects.equals(getStatus(), ticket.getStatus());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), userId, getAmount(), getDescription(), getStatus());
+        return Objects.hash(getTicketId(), userId, getAmount(), getDescription(), getStatus());
     }
 
     @Override
     public String toString() {
         return "Ticket{" +
-                "id=" + id +
+                "id=" + ticketId +
                 ", userid=" + userId +
                 ", amount=" + amount +
                 ", description='" + description + '\'' +
