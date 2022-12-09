@@ -36,6 +36,23 @@ public class UserDao {
         }
     }
 
+    public boolean checkUser(User user) {
+
+        try {
+            String sql = "SELECT * FROM users WHERE email = ?";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+
+            pstmt.setString(1, user.getEmail());
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     public void delete(User user) {
         try {
             String sql = "DELETE FROM users WHERE user_id = ?";
@@ -96,11 +113,12 @@ public class UserDao {
         }
         return null;
     }
+
     public Set<User> getAllUsers() {
 
         //Prepares the SQL statment
         String sql = "SELECT * FROM users";
-        Set<User> users = new HashSet();
+        Set<User> users = new HashSet<>();
 
         //Submits the query and fills the Ticket Set with the result from the users table
         try {
@@ -216,13 +234,16 @@ public class UserDao {
         return result;
     }
 
-    public int alterUserRole(Integer id, String role) {
-        String sql = "UPDATE users SET role = '" + role + "' WHERE user_id = '" + id + "'";
+    public int alterUserRole(User user, String newRole) {
+        String sql = "UPDATE users SET role = ? WHERE user_id = ?";
         Integer result = -1;
 
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql);
-            result = pstmt.executeUpdate();
+            pstmt.setString(1, newRole);
+            pstmt.setInt(2, user.getUserId());
+
+            pstmt.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,7 +1,5 @@
 package project.persistence;
 
-import project.exceptions.PasswordIncorrectException;
-import project.exceptions.UserNotFoundException;
 import project.pojo.Ticket;
 import project.pojo.User;
 
@@ -19,7 +17,7 @@ public class TicketDao {
 
         //Connects to the database and prepares the SQL statement
         String sql = "SELECT * FROM tickets";
-        Set<Ticket> tickets = new HashSet();
+        Set<Ticket> tickets = new HashSet<>();
 
        //Submits the query and fills the Ticket Set with the result from the ticket table
         try {
@@ -47,7 +45,7 @@ public class TicketDao {
 
         //Connects to the database and prepares the SQL statement
         String sql = "SELECT * FROM tickets WHERE status = 'Pending'";
-        Set<Ticket> tickets = new HashSet();
+        Set<Ticket> tickets = new HashSet<>();
 
         //Submits the query and fills the Ticket Set with the result from the ticket table
         try {
@@ -120,35 +118,59 @@ public class TicketDao {
         }
     }
 
-    public Set<Ticket> getUserTickets(Integer id, String filter) {
+    public Set<Ticket> getUserTickets(User user) {
 
-        //Connects to the database and prepares the SQL statement
-        String sql = "";
 
-        // if a filter is applied change the statement to only retrieve approved/denied/pending
-        if (filter == "") {
-            sql = "SELECT * FROM tickets WHERE user_id = '" + id + "'";
-        }
-        else {
-            sql = "SELECT * FROM tickets WHERE user_id = '" + id + "' AND status = '" + filter + "'";
-        }
         Set<Ticket> tickets = new HashSet();
 
         //Submits the query and fills the Ticket Set with the result from the ticket table
         try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+            String sql = "SELECT * FROM tickets WHERE user_id = ?";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, user.getUserId());
+
+            ResultSet rs = pstmt.executeQuery();
 
             while(rs.next()) {
-                Ticket ticket = new Ticket();
-                ticket.setTicketId(rs.getInt("ticket_id"));
-                ticket.setUserid(rs.getInt("user_id"));
-                ticket.setAmount(rs.getDouble("amount"));
-                ticket.setDescription(rs.getString("description"));
-                ticket.setStatus(rs.getString("status"));
+                Ticket ticket = new Ticket(rs.getInt("ticket_id"),
+                        rs.getInt("user_id"),
+                        rs.getDouble("amount"),
+                        rs.getString("description"),
+                        rs.getString("status"));
+
                 tickets.add(ticket);
             }
-            connection.close();
+
+        } catch (SQLException e) {
+
+            throw new RuntimeException(e);
+        }
+        return tickets;
+    }
+
+    public Set<Ticket> getUserTickets(User user, String filter) {
+
+
+        Set<Ticket> tickets = new HashSet();
+
+        //Submits the query and fills the Ticket Set with the result from the ticket table
+        try {
+            String sql = "SELECT * FROM tickets WHERE user_id = ? AND status = ?";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, user.getUserId());
+            pstmt.setString(2, filter);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                Ticket ticket = new Ticket(rs.getInt("ticket_id"),
+                        rs.getInt("user_id"),
+                        rs.getDouble("amount"),
+                        rs.getString("description"),
+                        rs.getString("status"));
+
+                tickets.add(ticket);
+            }
 
         } catch (SQLException e) {
 

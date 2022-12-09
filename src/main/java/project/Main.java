@@ -1,16 +1,15 @@
 package project;
 
-import project.persistence.UserDao;
-
 public class Main {
     public static void main(String... args) {
-        UserDao udao = new UserDao();
+
+
         //User currentUser = udao.checkLogin();
 
        // System.out.println("Currently logged in as: " + currentUser.getFirstname()
         //        + " " + currentUser.getLastname());
        // udao.alterUserRole(3,"Manager");
-        udao.register();
+
 /*
         TicketDao dao = new TicketDao();
         Set<Ticket> results = dao.getUserTickets(1, "");
