@@ -14,19 +14,13 @@ public class User {
     public User() {
     }
 
-    public User (String email, String firstName, String lastName, String passphrase){
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.passphrase = passphrase;
-    }
     public User( Integer userId, String email, String firstName, String lastName, String passphrase, String role) {
-        this.userId = userId;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.userId     = userId;
+        this.email      = email;
+        this.firstName  = firstName;
+        this.lastName   = lastName;
         this.passphrase = passphrase;
-        this.role = role;
+        this.role       = role;
     }
 
     public int getUserId() {

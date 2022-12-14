@@ -1,57 +1,60 @@
 package project;
 
+import io.javalin.Javalin;
+import project.persistence.TicketDao;
+import project.persistence.UserDao;
+import project.pojo.User;
+import project.service.TicketService;
+import project.service.UserService;
+
+import java.io.InputStream;
+import java.sql.SQLOutput;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 public class Main {
     public static void main(String... args) {
 
+        Javalin webApp = Javalin.create().start(8080);
+        UserService uService = new UserService(new UserDao());
+        TicketService tService = new TicketService(new TicketDao());
 
-        //User currentUser = udao.checkLogin();
+        webApp.get("/ping", (ctx) -> {
+            ctx.result("pong!");
+            ctx.status(200);
+        });
 
-       // System.out.println("Currently logged in as: " + currentUser.getFirstname()
-        //        + " " + currentUser.getLastname());
-       // udao.alterUserRole(3,"Manager");
+        webApp.post("/registerUser", (ctx) -> {
 
-/*
-        TicketDao dao = new TicketDao();
-        Set<Ticket> results = dao.getUserTickets(1, "");
+             User newUser = ctx.bodyAsClass(User.class);
+             uService.registerNewUser(newUser);
 
-        for (Ticket t : results){
-            System.out.println(t);
-        }
+             ctx.status(201);
+        });
 
-        UserDao udao = new UserDao();
-        Set<User> uResults = udao.getAllUsers();
+        webApp.get("/getAllUsers", (ctx) -> {
+            Set<User> users = uService.getAllUsers();
+            ctx.jsonStream(users);
+            ctx.status(200);
+        });
 
-        for (User u : uResults) {
-            System.out.println(u);
-        }
+        webApp.get("/login", (ctx) -> {
+            User newUser = ctx.bodyAsClass(User.class);
+            if (uService.login(newUser)) {
+                ctx.result("Login Successful!");
+            } else {
+                ctx.result("Login has failed");
+            }
+            ctx.status(200);
+        });
 
+        webApp.post("/alterRole", (ctx) -> {
+            User newUser = ctx.bodyAsClass(User.class);
+            uService.changeUserRole(newUser);
+            ctx.status(201);
+        });
 
-        Boolean login = udao.checkLogin("employee@company.com", "password");
-
-        System.out.println("Login was: " + login);
-        //dao.alterTicket(1, "Denied");
-*/
-        /*
-        System.out.println("====================================");
-        System.out.println("Welcome to the Reimbursement System!");
-        System.out.println("====================================");
-
-        System.out.println("Press 1 to log in");
-        System.out.println("Press 2 to register");
-        System.out.println("Press q to quit");
-        */
-
-        /*
-        Scanner scan = new Scanner(System.in);
-
-        String string = scan.nextLine();
-
-        Ticket newTicket = new Ticket();
-        newTicket.setUserid(1);
-        newTicket.setAmount(100.3);
-        newTicket.setDescription("expensive dinner");
-
-        dao.insertNewTicket(newTicket);
-        */
     }
 }

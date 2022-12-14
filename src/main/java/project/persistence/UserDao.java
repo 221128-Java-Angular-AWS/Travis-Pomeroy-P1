@@ -3,7 +3,6 @@ package project.persistence;
 import project.exceptions.PasswordIncorrectException;
 import project.exceptions.UserNotFoundException;
 import project.pojo.User;
-
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -19,23 +18,78 @@ public class UserDao {
     public void create(User user) {
         try {
             String sql = "INSERT INTO users (email, first_name, last_name, passphrase) VALUES (?,?,?,?)";
-            PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, user.getEmail());
             pstmt.setString(2, user.getFirstName());
             pstmt.setString(3, user.getLastName());
             pstmt.setString(4, user.getPassphrase());
 
             pstmt.executeUpdate();
-            ResultSet rs = pstmt.getGeneratedKeys();
 
-            if(rs.next()) {
-                System.out.println(rs.getInt("user_id"));
-            }
+            System.out.println("Created new User");
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    public User getUser(User user) {
+        //Prepares the SQL statment
+        String sql = "SELECT * FROM users WHERE user_id = ?";
+
+        //Submits the query and fills the Ticket Set with the result from the users table
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, user.getUserId());
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+
+                User foundUser = new User(rs.getInt("user_id"),
+                        rs.getString("email"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("passphrase"),
+                        rs.getString("role"));
+
+                return foundUser;
+            }
+            System.out.println("Cant find user");
+            return null;
+
+        } catch (SQLException e) {
+
+            throw new RuntimeException(e);
+        }
+    }
+    public Set<User> getAllUsers() {
+
+        //Prepares the SQL statment
+        String sql = "SELECT * FROM users";
+        Set<User> users = new HashSet<>();
+
+        //Submits the query and fills the Ticket Set with the result from the users table
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                User user = new User(rs.getInt("user_id"),
+                        rs.getString("email"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("passphrase"),
+                        rs.getString("role"));
+
+                users.add(user);
+            }
+
+        } catch (SQLException e) {
+
+            throw new RuntimeException(e);
+        }
+        return users;
+    }
     public boolean checkUser(User user) {
 
         try {
@@ -45,12 +99,13 @@ public class UserDao {
             pstmt.setString(1, user.getEmail());
             ResultSet rs = pstmt.executeQuery();
 
-            if (rs.next()) {
+            if (!rs.next()) {
                 return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return false;
     }
     public void delete(User user) {
@@ -68,14 +123,15 @@ public class UserDao {
 
     public void update(User user) {
         try {
-            String sql = "UPDATE users SET email = ?, first_name = ?, last_name = ?, passphrase = ? WHERE user_id = ?";
+            String sql = "UPDATE users SET email = ?, first_name = ?, last_name = ?, passphrase = ?, role = ? WHERE user_id = ?";
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, user.getEmail());
             pstmt.setString(2, user.getFirstName());
             pstmt.setString(3, user.getLastName());
             pstmt.setString(4, user.getPassphrase());
-            pstmt.setInt(5, user.getUserId());
-
+            pstmt.setString(5, user.getRole());
+            pstmt.setInt(6, user.getUserId());
+            System.out.println(user);
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -99,7 +155,7 @@ public class UserDao {
                                 rs.getString("email"),
                                 rs.getString("first_name"),
                                 rs.getString("last_name"),
-                                rs.getString("password"),
+                                rs.getString("passphrase"),
                                 rs.getString("role"));
 
             if(user.getPassphrase().equals(password)) {
@@ -112,35 +168,6 @@ public class UserDao {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public Set<User> getAllUsers() {
-
-        //Prepares the SQL statment
-        String sql = "SELECT * FROM users";
-        Set<User> users = new HashSet<>();
-
-        //Submits the query and fills the Ticket Set with the result from the users table
-        try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
-
-            while(rs.next()) {
-                User user = new User(rs.getInt("user_id"),
-                        rs.getString("email"),
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
-                        rs.getString("password"),
-                        rs.getString("role"));
-
-                users.add(user);
-            }
-
-        } catch (SQLException e) {
-
-            throw new RuntimeException(e);
-        }
-        return users;
     }
 
     public User checkLogin () {
@@ -234,21 +261,4 @@ public class UserDao {
         return result;
     }
 
-    public int alterUserRole(User user, String newRole) {
-        String sql = "UPDATE users SET role = ? WHERE user_id = ?";
-        Integer result = -1;
-
-        try {
-            PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setString(1, newRole);
-            pstmt.setInt(2, user.getUserId());
-
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
 }
-

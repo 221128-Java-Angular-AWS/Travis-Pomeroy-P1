@@ -1,10 +1,11 @@
 package project.service;
 
+import jakarta.servlet.ServletException;
+import project.exceptions.PasswordIncorrectException;
+import project.exceptions.UserNotFoundException;
 import project.persistence.UserDao;
 import project.pojo.User;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.util.Set;
 
 public class UserService {
     private UserDao dao;
@@ -14,27 +15,60 @@ public class UserService {
     }
 
     public void registerNewUser(User user) {
-        if (user.getEmail() == null) {
-            System.out.println("Invalid email");
-        } else if (dao.checkUser(user)) {
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+            System.out.println("Must have email");
+        } else if (user.getPassphrase() == null || user.getPassphrase().isEmpty()) {
+            System.out.println("Must have password");
+        }else if (dao.checkUser(user)) {
             dao.create(user);
         } else {
             System.out.println("Unable to create new user");
         }
     }
 
-    public void changeUserRole(User user, String role) {
+    public void changeUserRole(User user) {
 
-        if (role.equals("Employee")) {
-            user.setRole("Employee");
-            dao.update(user);
+        if (user.getUserId() <= 0) {
+            System.out.println("Invalid ID");
+            return;
+        }
 
-        } else if (role.equals("Manager")) {
-            user.setRole("Manager");
-            dao.update(user);
+        User foundUser = dao.getUser(user);
+
+        if (foundUser.getRole().equals("Employee")) {
+            foundUser.setRole("Manager");
+            dao.update(foundUser);
+            System.out.println(user.getUserId() + " is now a Manager");
+
+        } else if (foundUser.getRole().equals("Manager")) {
+            foundUser.setRole("Employee");
+            dao.update(foundUser);
+            System.out.println(user.getUserId() + " is now an Employee");
 
         } else {
             System.out.println("Invalid role!");
         }
+    }
+
+    public Set<User> getAllUsers() {
+        return dao.getAllUsers();
+    }
+
+    public boolean login(User user) {
+        try {
+            if (user.getEmail() == null || user.getEmail().isEmpty()) {
+                System.out.println("Missing Email");
+            } else if (user.getPassphrase() == null || user.getPassphrase().isEmpty()) {
+                System.out.println("Missing Password");
+            } else {
+                dao.authenticate(user.getEmail(), user.getPassphrase());
+                return true;
+            }
+        } catch (UserNotFoundException e) {
+            System.out.println("Username not found");
+        } catch (PasswordIncorrectException e) {
+            System.out.println("Password is incorrect");
+        }
+        return false;
     }
 }
