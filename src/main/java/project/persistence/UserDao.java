@@ -65,7 +65,7 @@ public class UserDao {
     public Set<User> getAllUsers() {
 
         //Prepares the SQL statment
-        String sql = "SELECT * FROM users";
+        String sql = "SELECT * FROM users ORDER BY user_id";
         Set<User> users = new HashSet<>();
 
         //Submits the query and fills the Ticket Set with the result from the users table

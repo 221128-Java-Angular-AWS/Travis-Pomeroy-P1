@@ -22,26 +22,30 @@ public class TicketService {
         return dao.getAllPendingTickets();
     }
 
-    public Set<Ticket> displayUserTickets(User user) {
-        return dao.getUserTickets(user);
+    public Set<Ticket> displayUserTickets(Integer userId) {
+        return dao.getUserTickets(userId);
     }
 
-    public Set<Ticket> displayUserTickets(User user, String filter) {
-        if (filter.equals("Pending") || filter.equals("Accepted") || filter.equals("Denied")) {
-            return dao.getUserTickets(user, filter);
+    public Set<Ticket> displayUserTickets(Integer userId, String filter) {
+
+        //a quick check is done that the filter is valid
+        if (filter.equals("Pending") || filter.equals("Approved") || filter.equals("Denied")) {
+            return dao.getUserTickets(userId, filter);
         }
+        System.out.println("Invalid filter!");
         return null;
     }
-    public void changeStatus(Ticket ticket, String status) {
+    public void changeStatus(Ticket ticket) {
 
-        // this method updates the status of the selected ticket
-        if (status.equals("Accepted")) {
-            ticket.setStatus("Accepted");
-            dao.update(ticket);
+        Ticket foundTicket = dao.getTicket(ticket);
+        foundTicket.setStatus(ticket.getStatus());
 
-        } else if (status.equals("Denied")) {
-            ticket.setStatus("Denied");
-            dao.update(ticket);
+        System.out.println(foundTicket);
+        if (foundTicket.getStatus().equals("Approved")) {
+            dao.update(foundTicket);
+
+        } else if (foundTicket.getStatus().equals("Denied")) {
+            dao.update(foundTicket);
 
         } else {
             System.out.println("Invalid status!");

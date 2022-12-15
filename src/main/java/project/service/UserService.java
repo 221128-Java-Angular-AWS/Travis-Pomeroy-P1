@@ -1,6 +1,5 @@
 package project.service;
 
-import jakarta.servlet.ServletException;
 import project.exceptions.PasswordIncorrectException;
 import project.exceptions.UserNotFoundException;
 import project.persistence.UserDao;
@@ -27,11 +26,6 @@ public class UserService {
     }
 
     public void changeUserRole(User user) {
-
-        if (user.getUserId() <= 0) {
-            System.out.println("Invalid ID");
-            return;
-        }
 
         User foundUser = dao.getUser(user);
 

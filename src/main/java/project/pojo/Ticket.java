@@ -25,8 +25,8 @@ public class Ticket {
         this.ticketId = ticketId;
     }
 
-    public void setUserid(Integer user_id) {
-        this.userId = user_id;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public void setAmount(Double amount) {
@@ -45,7 +45,7 @@ public class Ticket {
         return ticketId;
     }
 
-    public Integer getUser_Id() {
+    public Integer getUserId() {
         return userId;
     }
 

@@ -44,7 +44,7 @@ public class TicketDao {
     public Set<Ticket> getAllPendingTickets() {
 
         //Connects to the database and prepares the SQL statement
-        String sql = "SELECT * FROM tickets WHERE status = 'Pending'";
+        String sql = "SELECT * FROM tickets WHERE status = 'Pending' ORDER BY ticket_id ASC";
         Set<Ticket> tickets = new HashSet<>();
 
         //Submits the query and fills the Ticket Set with the result from the ticket table
@@ -60,8 +60,8 @@ public class TicketDao {
                                             rs.getString("status"));
 
                 tickets.add(ticket);
+                System.out.println(ticket);
             }
-            connection.close();
 
         } catch (SQLException e) {
 
@@ -70,11 +70,38 @@ public class TicketDao {
         return tickets;
     }
 
+    public Ticket getTicket(Ticket ticket) {
+        String sql = "SELECT * FROM tickets WHERE ticket_id = ?";
+
+        //Submits the query and fills the Ticket Set with the result from the users table
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, ticket.getTicketId());
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+
+                Ticket foundTicket = new Ticket(rs.getInt("ticket_id"),
+                        rs.getInt("user_id"),
+                        rs.getDouble("amount"),
+                        rs.getString("description"),
+                        rs.getString("status"));
+
+                return foundTicket;
+            }
+            System.out.println("Cant find user");
+            return null;
+
+        } catch (SQLException e) {
+
+            throw new RuntimeException(e);
+        }
+    }
     public void create(Ticket ticket) {
         try {
             String sql = "INSERT INTO tickets (user_id, amount, description) VALUES (?,?,?)";
             PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setInt(1, ticket.getUser_Id());
+            pstmt.setInt(1, ticket.getUserId());
             pstmt.setDouble(2, ticket.getAmount());
             pstmt.setString(3, ticket.getDescription());
 
@@ -104,12 +131,13 @@ public class TicketDao {
 
     public void update(Ticket ticket) {
         try {
-            String sql = "UPDATE tickets SET user_id = ?, amount = ?, description = ?, role = ? WHERE ticket_id = ?";
+            String sql = "UPDATE tickets SET user_id = ?, amount = ?, description = ?, status = ? WHERE ticket_id = ?";
             PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setInt(1, ticket.getUser_Id());
+            pstmt.setInt(1, ticket.getUserId());
             pstmt.setDouble(2, ticket.getAmount());
             pstmt.setString(3, ticket.getDescription());
             pstmt.setString(4, ticket.getStatus());
+            pstmt.setInt(5, ticket.getTicketId());
 
             pstmt.executeUpdate();
 
@@ -118,7 +146,7 @@ public class TicketDao {
         }
     }
 
-    public Set<Ticket> getUserTickets(User user) {
+    public Set<Ticket> getUserTickets(Integer userId) {
 
 
         Set<Ticket> tickets = new HashSet();
@@ -127,7 +155,7 @@ public class TicketDao {
         try {
             String sql = "SELECT * FROM tickets WHERE user_id = ?";
             PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setInt(1, user.getUserId());
+            pstmt.setInt(1, userId);
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -148,7 +176,7 @@ public class TicketDao {
         return tickets;
     }
 
-    public Set<Ticket> getUserTickets(User user, String filter) {
+    public Set<Ticket> getUserTickets(Integer userId, String filter) {
 
 
         Set<Ticket> tickets = new HashSet();
@@ -157,7 +185,7 @@ public class TicketDao {
         try {
             String sql = "SELECT * FROM tickets WHERE user_id = ? AND status = ?";
             PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setInt(1, user.getUserId());
+            pstmt.setInt(1, userId);
             pstmt.setString(2, filter);
 
             ResultSet rs = pstmt.executeQuery();
@@ -186,7 +214,7 @@ public class TicketDao {
 
         try{
             PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setInt(1, ticket.getUser_Id());
+            pstmt.setInt(1, ticket.getUserId());
             pstmt.setDouble(2,ticket.getAmount());
             pstmt.setString(3,ticket.getDescription());
             result = pstmt.executeUpdate();
