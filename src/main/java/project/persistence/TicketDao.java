@@ -100,17 +100,13 @@ public class TicketDao {
     public void create(Ticket ticket) {
         try {
             String sql = "INSERT INTO tickets (user_id, amount, description) VALUES (?,?,?)";
-            PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setInt(1, ticket.getUserId());
             pstmt.setDouble(2, ticket.getAmount());
             pstmt.setString(3, ticket.getDescription());
 
-
             pstmt.executeUpdate();
-            ResultSet rs = pstmt.getGeneratedKeys();
-            if(rs.next()) {
-                System.out.println(rs.getInt("ticket_id"));
-            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

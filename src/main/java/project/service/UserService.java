@@ -13,15 +13,23 @@ public class UserService {
         this.dao = dao;
     }
 
+    public boolean verifyUser (User user) {
+        return dao.checkUser(user);
+    }
     public void registerNewUser(User user) {
+
         if (user.getEmail() == null || user.getEmail().isEmpty()) {
             System.out.println("Must have email");
+
         } else if (user.getPassphrase() == null || user.getPassphrase().isEmpty()) {
             System.out.println("Must have password");
-        }else if (dao.checkUser(user)) {
+
+        } else if (dao.checkUser(user)) {
             dao.create(user);
+
         } else {
             System.out.println("Unable to create new user");
+
         }
     }
 

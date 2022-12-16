@@ -60,8 +60,13 @@ public class JavalinApp {
 
     public static void registerUser (Context ctx) {
         User newUser = ctx.bodyAsClass(User.class);
-        uService.registerNewUser(newUser);
 
+        if (!uService.verifyUser(newUser))
+            ctx.result("Username already in use!");
+        else {
+            uService.registerNewUser(newUser);
+            ctx.result("Successfully created user!");
+        }
         ctx.status(201);
     }
 
@@ -73,8 +78,19 @@ public class JavalinApp {
 
     public static void login (Context ctx) {
         User newUser = ctx.bodyAsClass(User.class);
-        System.out.println(uService.login(newUser));
-        ctx.json(uService.login(newUser));
+        if (!uService.verifyUser(newUser)) {
+
+            newUser = uService.login(newUser);
+
+            if (newUser == null)
+                ctx.result("Password is incorrect");
+            else {
+                ctx.json(newUser);
+            }
+        }
+        else
+            ctx.result("Username not found");
+
 
         ctx.status(200);
     }
@@ -93,7 +109,15 @@ public class JavalinApp {
 
     public static void submitTicket (Context ctx) {
         Ticket newTicket = ctx.bodyAsClass(Ticket.class);
-        tService.submitNewTicket(newTicket);
+
+        if (newTicket.getAmount() == null)
+            ctx.result("Please enter an amount");
+        else if (newTicket.getDescription() == null || newTicket.getDescription().isEmpty())
+            ctx.result("Please enter a description");
+        else {
+            tService.submitNewTicket(newTicket);
+            ctx.result("Created new Ticket Submission");
+        }
         ctx.status(201);
     }
 
@@ -125,7 +149,5 @@ public class JavalinApp {
         uService.updateInfo(newUser);
         ctx.status(201);
     }
-    //registeruser, getAllUsers, login, alterRole, getPendingTicket, submitTicket, changeStatus,
-    //getUserTickets, updateInfo
 
 }
