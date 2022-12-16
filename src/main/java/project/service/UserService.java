@@ -48,21 +48,39 @@ public class UserService {
         return dao.getAllUsers();
     }
 
-    public boolean login(User user) {
+    public User login(User user) {
         try {
             if (user.getEmail() == null || user.getEmail().isEmpty()) {
                 System.out.println("Missing Email");
             } else if (user.getPassphrase() == null || user.getPassphrase().isEmpty()) {
                 System.out.println("Missing Password");
             } else {
-                dao.authenticate(user.getEmail(), user.getPassphrase());
-                return true;
+                return dao.authenticate(user.getEmail(), user.getPassphrase());
             }
         } catch (UserNotFoundException e) {
             System.out.println("Username not found");
         } catch (PasswordIncorrectException e) {
             System.out.println("Password is incorrect");
         }
-        return false;
+        return null;
+    }
+
+    public void updateInfo(User user) {
+
+        User foundUser = dao.getUser(user);
+
+        //checks if the changed email does not match any entries in the user table
+        if (dao.checkUser(user) || foundUser.getEmail().equals(user.getEmail())) {
+
+            foundUser.setEmail(user.getEmail());
+            foundUser.setFirstName(user.getFirstName());
+            foundUser.setLastName(user.getLastName());
+            foundUser.setPassphrase(user.getPassphrase());
+            System.out.println(foundUser);
+
+            dao.update(foundUser);
+        } else {
+            System.out.println("Email already in use!");
+        }
     }
 }

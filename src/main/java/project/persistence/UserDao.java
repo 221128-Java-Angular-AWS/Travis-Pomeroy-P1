@@ -125,13 +125,14 @@ public class UserDao {
         try {
             String sql = "UPDATE users SET email = ?, first_name = ?, last_name = ?, passphrase = ?, role = ? WHERE user_id = ?";
             PreparedStatement pstmt = connection.prepareStatement(sql);
+
             pstmt.setString(1, user.getEmail());
             pstmt.setString(2, user.getFirstName());
             pstmt.setString(3, user.getLastName());
             pstmt.setString(4, user.getPassphrase());
             pstmt.setString(5, user.getRole());
             pstmt.setInt(6, user.getUserId());
-            System.out.println(user);
+
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -169,96 +170,4 @@ public class UserDao {
         }
         return null;
     }
-
-    public User checkLogin () {
-        //The logic from this may be used later
-        Scanner scan = new Scanner(System.in);
-
-        String user;
-        String pass;
-        boolean notLogin = true;
-        User loginUser = new User();
-
-        System.out.println("Please log in");
-
-        //will repeat until a successful login
-        do {
-            user = scan.nextLine();
-            pass = scan.nextLine();
-
-            String sql = "SELECT * FROM users WHERE email = '" + user + "' AND passphrase = '" + pass + "'";
-
-            try {
-                PreparedStatement pstmt = connection.prepareStatement(sql);
-                ResultSet rs = pstmt.executeQuery();
-
-                // if the query is not empty will fill in the fields for the user
-                if (rs.next()) {
-                    loginUser.setUserId(rs.getInt("user_id"));
-                    loginUser.setEmail(rs.getString("email"));
-                    loginUser.setFirstName(rs.getString("first_name"));
-                    loginUser.setLastName(rs.getString("last_name"));
-                    loginUser.setPassphrase(rs.getString("passphrase"));
-                    loginUser.setRole(rs.getString("role"));
-
-                    notLogin = false;
-                } else {
-                    System.out.println("Incorrect Username or Password");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } while (notLogin);
-        System.out.println("Logged in as: " + loginUser.getFirstName() + " " + loginUser.getLastName());
-        return loginUser;
-    }
-
-    public int register() {
-
-        //The logic from this may be used later
-        String sql = "INSERT INTO users (email, first_name, last_name, passphrase) VALUES (?,?,?,?)";
-        Integer result = -1;
-
-        Scanner scan = new Scanner(System.in);
-
-        System.out.println("Please type email, firstname, lastname, then password");
-        String email    = scan.nextLine();
-        String first    = scan.nextLine();
-        String last     = scan.nextLine();
-        String pass     = scan.nextLine();
-
-        User newUser = new User();
-        newUser.setEmail(email);
-        newUser.setFirstName(first);
-        newUser.setLastName(last);
-        newUser.setPassphrase(pass);
-        try{
-
-            String sql2 = "SELECT * FROM users WHERE email = '" + email + "'";
-            PreparedStatement pstmt = connection.prepareStatement(sql2);
-            ResultSet rs = pstmt.executeQuery();
-
-            //Checking if the email parameter is valid for the database
-            if (email.isEmpty()) {
-                System.out.println("Unable to create new user");
-                return result;
-            }   else if (rs.next()) {
-                System.out.println("Email already exists!");
-                return result;
-            }
-
-
-            PreparedStatement pstmt2 = connection.prepareStatement(sql);
-            pstmt2.setString(1,newUser.getEmail());
-            pstmt2.setString(2,newUser.getFirstName());
-            pstmt2.setString(3,newUser.getLastName());
-            pstmt2.setString(4,newUser.getPassphrase());
-            result = pstmt2.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
 }
