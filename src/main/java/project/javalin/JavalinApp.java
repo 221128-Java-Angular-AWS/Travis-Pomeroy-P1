@@ -82,17 +82,21 @@ public class JavalinApp {
 
             newUser = uService.login(newUser);
 
-            if (newUser == null)
+            if (newUser == null) {
                 ctx.result("Password is incorrect");
+                ctx.status(401);
+            }
             else {
                 ctx.json(newUser);
+                ctx.status(200);
             }
         }
-        else
+        else {
             ctx.result("Username not found");
+            ctx.status(404);
+        }
 
 
-        ctx.status(200);
     }
 
     public static void alterRole (Context ctx) {
@@ -110,22 +114,26 @@ public class JavalinApp {
     public static void submitTicket (Context ctx) {
         Ticket newTicket = ctx.bodyAsClass(Ticket.class);
 
-        if (newTicket.getAmount() == null)
+        if (newTicket.getAmount() == null) {
             ctx.result("Please enter an amount");
-        else if (newTicket.getDescription() == null || newTicket.getDescription().isEmpty())
+            ctx.status(400);
+        }
+        else if (newTicket.getDescription() == null || newTicket.getDescription().isEmpty()) {
             ctx.result("Please enter a description");
+            ctx.status(400);
+        }
         else {
             tService.submitNewTicket(newTicket);
             ctx.result("Created new Ticket Submission");
+            ctx.status(201);
         }
-        ctx.status(201);
     }
 
     public static void changeStatus (Context ctx) {
         Ticket newTicket = ctx.bodyAsClass(Ticket.class);
         tService.changeStatus(newTicket);
-        ctx.result("Attempting to Alter Ticket to " + newTicket.getStatus());
-        ctx.status(201);
+        ctx.result("Altering Ticket to " + newTicket.getStatus());
+        ctx.status(202);
     }
 
     public static void getUserTickets (Context ctx) {
@@ -146,8 +154,8 @@ public class JavalinApp {
 
     public static void updateInfo (Context ctx) {
         User newUser = ctx.bodyAsClass(User.class);
-        uService.updateInfo(newUser);
-        ctx.status(201);
+        ctx.json(uService.updateInfo(newUser));
+        ctx.status(200);
     }
 
 }

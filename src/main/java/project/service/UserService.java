@@ -73,22 +73,33 @@ public class UserService {
         return null;
     }
 
-    public void updateInfo(User user) {
+    public User updateInfo(User user) {
 
         User foundUser = dao.getUser(user);
 
         //checks if the changed email does not match any entries in the user table
         if (dao.checkUser(user) || foundUser.getEmail().equals(user.getEmail())) {
 
-            foundUser.setEmail(user.getEmail());
-            foundUser.setFirstName(user.getFirstName());
-            foundUser.setLastName(user.getLastName());
-            foundUser.setPassphrase(user.getPassphrase());
+            if (!user.getEmail().isEmpty())
+                foundUser.setEmail(user.getEmail());
+
+            if (!user.getFirstName().isEmpty())
+                foundUser.setFirstName(user.getFirstName());
+
+            if (!user.getLastName().isEmpty())
+                foundUser.setLastName(user.getLastName());
+
+            if (!user.getPassphrase().isEmpty())
+                foundUser.setPassphrase(user.getPassphrase());
+
             System.out.println(foundUser);
 
             dao.update(foundUser);
+
+            return foundUser;
         } else {
             System.out.println("Email already in use!");
+            return null;
         }
     }
 }
