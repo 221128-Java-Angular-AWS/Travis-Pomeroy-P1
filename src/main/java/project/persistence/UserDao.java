@@ -4,8 +4,7 @@ import project.exceptions.PasswordIncorrectException;
 import project.exceptions.UserNotFoundException;
 import project.pojo.User;
 import java.sql.*;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class UserDao {
@@ -66,7 +65,7 @@ public class UserDao {
 
         //Prepares the SQL statment
         String sql = "SELECT * FROM users ORDER BY user_id";
-        Set<User> users = new HashSet<>();
+        Set<User> users = new LinkedHashSet<>();
 
         //Submits the query and fills the Ticket Set with the result from the users table
         try {

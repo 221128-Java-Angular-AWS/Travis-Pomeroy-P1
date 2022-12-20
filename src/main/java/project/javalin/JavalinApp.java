@@ -1,6 +1,7 @@
 package project.javalin;
 
 import io.javalin.Javalin;
+import io.javalin.http.util.CookieStore;
 import project.persistence.TicketDao;
 import project.persistence.UserDao;
 import project.pojo.Ticket;

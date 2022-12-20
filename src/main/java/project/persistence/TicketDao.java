@@ -1,10 +1,9 @@
 package project.persistence;
 
 import project.pojo.Ticket;
-import project.pojo.User;
 
 import java.sql.*;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class TicketDao {
@@ -17,7 +16,7 @@ public class TicketDao {
 
         //Connects to the database and prepares the SQL statement
         String sql = "SELECT * FROM tickets";
-        Set<Ticket> tickets = new HashSet<>();
+        Set<Ticket> tickets = new LinkedHashSet<>();
 
        //Submits the query and fills the Ticket Set with the result from the ticket table
         try {
@@ -45,7 +44,7 @@ public class TicketDao {
 
         //Connects to the database and prepares the SQL statement
         String sql = "SELECT * FROM tickets WHERE status = 'Pending' ORDER BY ticket_id ASC";
-        Set<Ticket> tickets = new HashSet<>();
+        Set<Ticket> tickets = new LinkedHashSet<>();
 
         //Submits the query and fills the Ticket Set with the result from the ticket table
         try {
@@ -145,7 +144,7 @@ public class TicketDao {
     public Set<Ticket> getUserTickets(Integer userId) {
 
 
-        Set<Ticket> tickets = new HashSet();
+        Set<Ticket> tickets = new LinkedHashSet<>();
 
         //Submits the query and fills the Ticket Set with the result from the ticket table
         try {
@@ -175,7 +174,7 @@ public class TicketDao {
     public Set<Ticket> getUserTickets(Integer userId, String filter) {
 
 
-        Set<Ticket> tickets = new HashSet();
+        Set<Ticket> tickets = new LinkedHashSet<>();
 
         //Submits the query and fills the Ticket Set with the result from the ticket table
         try {
