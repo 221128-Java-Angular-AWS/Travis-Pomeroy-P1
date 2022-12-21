@@ -62,13 +62,15 @@ public class JavalinApp {
     public static void registerUser (Context ctx) {
         User newUser = ctx.bodyAsClass(User.class);
 
-        if (!uService.verifyUser(newUser))
+        if (!uService.verifyUser(newUser)) {
             ctx.result("Username already in use!");
-        else {
+            ctx.status(409);
+
+        } else {
             uService.registerNewUser(newUser);
             ctx.result("Successfully created user!");
+            ctx.status(201);
         }
-        ctx.status(201);
     }
 
     public static void getAllUsers (Context ctx) {
@@ -103,7 +105,8 @@ public class JavalinApp {
     public static void alterRole (Context ctx) {
         User newUser = ctx.bodyAsClass(User.class);
         uService.changeUserRole(newUser);
-        ctx.status(201);
+        ctx.result("Changed user role");
+        ctx.status(200);
     }
 
     public static void getPendingTicket (Context ctx) {
