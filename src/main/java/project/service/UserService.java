@@ -99,7 +99,7 @@ public class UserService {
             return foundUser;
         } else {
             System.out.println("Email already in use!");
-            return null;
+            return user;
         }
     }
 }
